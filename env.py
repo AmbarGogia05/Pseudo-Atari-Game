@@ -16,10 +16,23 @@ class Environment:
 
     def update(self, action):
         newstate = self.sprite + action
-
         if newstate[0] < 0 or newstate[0] > 9 or newstate[1] < 0 or newstate[1] > 9:
-            return
+            return 1
         if newstate[0]==3:
             if (0 <= newstate[1] < 4) or (5 <= newstate[1] < 7) or (8 <= newstate[1] < 10):
-                return
-        self.sprite=newstate
+                return 1
+            else:
+                self.sprite = newstate
+                return 0
+        self.sprite = newstate
+        return 0
+
+    def reward(self, action, time):
+        old_state = self.sprite
+        old_dist = np.sum(abs(self.target - old_state))
+        f1=self.update(action)
+        new_dist = np.sum(abs(self.target - self.sprite))
+
+        f2=int(np.array_equal(self.sprite, self.target))
+
+        return 20 * (old_dist - new_dist)/(time + 1) - f1 * 30 + f2 * 100

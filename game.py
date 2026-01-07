@@ -12,6 +12,7 @@ class Game:
         self.renderer = Renderer(self.env)
         self.action = np.zeros(2, int)
         self.counter = 0
+        self.reward = 0
 
 
     def step(self):
@@ -28,11 +29,11 @@ class Game:
                     self.action = np.array([0, 1])
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.game_over = True
-        self.env.update(self.action)
+        self.reward = self.env.reward(self.action, self.counter)
         self.action[:] = 0
         self.renderer.render_bg(self.counter)
         if np.array_equal(self.env.sprite, self.env.target):
-            self.game_over = 0
+            self.game_over = 1
         self.clock.tick(60)
 
 if __name__ == '__main__':
